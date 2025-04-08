@@ -1,4 +1,4 @@
-package com.inditex.technical.application.service;
+package com.inditex.technical.application.usecase;
 
 import java.time.LocalDateTime;
 
@@ -8,17 +8,17 @@ import com.inditex.technical.domain.model.ProductPricing;
 import com.inditex.technical.domain.ports.ProductPricingRepositoryPort;
 import com.inditex.technical.domain.ports.ProductPricingServicePort;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
-public class ProductPricingService implements ProductPricingServicePort {
+public class FindProductPricingUseCase implements ProductPricingServicePort {
 
-    private final ProductPricingRepositoryPort productPricingRepositoryPort;
+    private final ProductPricingRepositoryPort repositoryPort;
+
+    public FindProductPricingUseCase(ProductPricingRepositoryPort repositoryPort) {
+        this.repositoryPort = repositoryPort;
+    }
 
     @Override
     public ProductPricing findPrice(LocalDateTime startDate, Long productId, Long brandId) {
-        return productPricingRepositoryPort.findPrice(startDate, productId, brandId);
+        return repositoryPort.findPrice(startDate, productId, brandId);
     }
-
 }
