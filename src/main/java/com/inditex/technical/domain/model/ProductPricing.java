@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
 public class ProductPricing {
     private Long brandId;
@@ -17,4 +17,5 @@ public class ProductPricing {
     private Integer priority;
     private BigDecimal price;
     private String currency;
+    
 }
