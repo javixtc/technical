@@ -1,4 +1,4 @@
-package com.inditex.technical.application.dto;
+package com.inditex.technical.infrastructure.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,13 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductPricingDTO {
+public class ProductPricingResponse {
     private Long brandId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Long priceList;
     private Long productId;
-    private Integer priority;
     private BigDecimal price;
     private String currency;
 

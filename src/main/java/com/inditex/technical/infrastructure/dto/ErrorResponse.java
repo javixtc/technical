@@ -1,4 +1,4 @@
-package com.inditex.technical.infrastructure.exceptions;
+package com.inditex.technical.infrastructure.dto;
 
 import java.time.LocalDateTime;
 
