@@ -45,7 +45,7 @@ class ProductPricingRepositoryAdapterTest {
     }
 
     @Test
-    void testFindPrice_NoResult_ReturnsEmptyOptional() {
+    void testFindPriceNoResultReturnsEmptyOptional() {
 
         LocalDateTime requestDate = LocalDateTime.of(2025, 1, 1, 0, 0);
         Long nonExistingProductId = 99999L;
