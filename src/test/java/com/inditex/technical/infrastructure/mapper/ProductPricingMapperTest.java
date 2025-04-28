@@ -78,7 +78,7 @@ class ProductPricingMapperTest {
                 .brandId(entity.getBrandId())
                 .startDate(entity.getStartDate())
                 .endDate(entity.getEndDate())
-                .priceList((long) entity.getPriceList())
+                .priceList(Long.valueOf(entity.getPriceList()))
                 .productId(entity.getProductId())
                 .price(entity.getPrice())
                 .currency(entity.getCurrency())
