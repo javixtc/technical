@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inditex.technical.application.dto.ProductPricingDTO;
 import com.inditex.technical.application.usecase.FindProductPricingUseCase;
 import com.inditex.technical.domain.model.ProductPricing;
+import com.inditex.technical.infrastructure.dto.ProductPricingResponse;
 import com.inditex.technical.infrastructure.mapper.ProductPricingMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +49,7 @@ public class ProductPricingController {
                 responseCode = "200",
                 description = "Precio encontrado",
                 content = @Content(
-                    schema = @Schema(implementation = ProductPricingDTO.class),
+                    schema = @Schema(implementation = ProductPricingResponse.class),
                     examples = @ExampleObject(
                         value = """
                             {
@@ -119,7 +119,7 @@ public class ProductPricingController {
                     )
                 ))
         })
-    public ResponseEntity<ProductPricingDTO> findPrice(
+    public ResponseEntity<ProductPricingResponse> findPrice(
             @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) 
             @Parameter(description = "Fecha en formato ISO 8601", example = "2020-06-14T10:00:00") LocalDateTime date,
             
@@ -129,9 +129,7 @@ public class ProductPricingController {
             @RequestParam(name = "brandId") 
             @Parameter(description = "ID de la marca", example = "1") Long brandId
     ) {
-        ProductPricing price = productPricingService.findPrice(date, productId, brandId);
-        ProductPricingDTO productPricingDTO = productPricingMapper.toDto(price);
-
+        ProductPricing price = this.productPricingService.findPrice(date, productId, brandId);
+        ProductPricingResponse productPricingDTO = this.productPricingMapper.fromDomainToDto(price);
         return ResponseEntity.ok(productPricingDTO);
-    }
-}
+    }}
