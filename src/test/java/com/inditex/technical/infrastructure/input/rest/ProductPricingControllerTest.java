@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.inditex.technical.application.usecase.FindProductPricingUseCase;
+import com.inditex.technical.domain.exceptions.PriceNotFoundException;
 import com.inditex.technical.infrastructure.mapper.ProductPricingMapper;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -48,7 +49,7 @@ class ProductPricingControllerTest {
 
     @Test
     void testGetProductPrice_NotFound() throws Exception {
-        when(useCase.findPrice(any(), any(), any())).thenThrow(new EntityNotFoundException("Price not found"));
+        when(useCase.findPrice(any(LocalDateTime.class), any(Long.class), any(Long.class))).thenThrow(new EntityNotFoundException("Price not found"));
 
         mockMvc.perform(get("/api/v1/prices")
                 .param("date", "2020-06-14T10:00:00")
@@ -68,12 +69,24 @@ class ProductPricingControllerTest {
 
     @Test
     void testGetProductPrice_Error500() throws Exception {
-        when(useCase.findPrice(any(), any(), any())).thenThrow(new RuntimeException("Internal Server Error"));
+        when(useCase.findPrice(any(LocalDateTime.class), any(Long.class), any(Long.class))).thenThrow(new RuntimeException("Internal Server Error"));
 
         mockMvc.perform(get("/bad")
                 .param("date", "2020-06-14T10:00:00")
                 .param("productId", "35455")
                 .param("brandId", "1"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void whenPriceNotFound_thenReturns404AndErrorResponse() throws Exception {
+
+        when(useCase.findPrice(any(LocalDateTime.class), any(Long.class), any(Long.class))).thenThrow(new PriceNotFoundException("Price not found"));
+
+        mockMvc.perform(get("/api/v1/prices")
+            .param("date", "2025-06-14T10:00:00")
+            .param("productId", "111")
+            .param("brandId", "111"))
+            .andExpect(status().isNotFound());
     }
 }
