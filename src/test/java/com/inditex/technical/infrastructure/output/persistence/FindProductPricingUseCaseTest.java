@@ -2,10 +2,10 @@ package com.inditex.technical.infrastructure.output.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,17 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inditex.technical.domain.exceptions.PriceNotFoundException;
 import com.inditex.technical.domain.model.ProductPricing;
+import com.inditex.technical.domain.ports.ProductPricingServicePort;
 
 @SpringBootTest
 @Transactional
-class ProductPricingRepositoryAdapterTest {
+class FindProductPricingUseCaseTest {
 
     @Autowired
-    private ProductPricingRepositoryAdapter repositoryAdapter;
-
-    private static final Long PRODUCT_ID = 35455L;
-    private static final Long BRAND_ID = 1L;
+    private ProductPricingServicePort service;
 
     @ParameterizedTest
     @CsvSource({
@@ -34,26 +33,25 @@ class ProductPricingRepositoryAdapterTest {
         "2020-06-15T10:00:00, 30.50",
         "2020-06-16T21:00:00, 38.95",
     })
-    void testFindPriceAtVariousTimes(String dateTimeString, BigDecimal expectedPrice) {
+    void testFindPriceFromUseCase(String dateTimeString, BigDecimal expectedPrice) {
+        LocalDateTime date = LocalDateTime.parse(dateTimeString);
+        Long productId = 35455L;
+        Long brandId = 1L;
 
-        LocalDateTime requestDate = LocalDateTime.parse(dateTimeString);
-
-        Optional<ProductPricing> result = repositoryAdapter.findPrice(requestDate, PRODUCT_ID, BRAND_ID);
+        ProductPricing result = service.findPrice(date, productId, brandId);
 
         assertNotNull(result);
-        assertEquals(expectedPrice, result.get().getPrice());
+        assertEquals(expectedPrice, result.getPrice());
     }
 
     @Test
-    void testFindPriceNoResultReturnsEmptyOptional() {
-
-        LocalDateTime requestDate = LocalDateTime.of(2025, 1, 1, 0, 0);
+    void testFindPriceFromUseCase_NotFound_ThrowsException() {
+        LocalDateTime date = LocalDateTime.of(2025, 1, 1, 0, 0);
         Long nonExistingProductId = 99999L;
         Long nonExistingBrandId = 999L;
 
-        Optional<ProductPricing> result = repositoryAdapter.findPrice(requestDate, nonExistingProductId, nonExistingBrandId);
-
-        assertNotNull(result);
-        assertEquals(Optional.empty(), result);
+        assertThrows(PriceNotFoundException.class, () -> {
+            service.findPrice(date, nonExistingProductId, nonExistingBrandId);
+        });
     }
 }
