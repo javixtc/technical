@@ -20,7 +20,7 @@ import com.inditex.technical.domain.ports.ProductPricingServicePort;
 
 @SpringBootTest
 @Transactional
-class FindProductPricingUseCaseTest {
+class ProductPricingRepositoryAdapterTest {
 
     @Autowired
     private ProductPricingServicePort service;
